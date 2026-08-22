@@ -15,7 +15,7 @@ def create_app(config_name="development"):
 
 def _init_extensions(app):
     db.init_app(app)
-    from app import models  # noqa: F401
+    from app import models  
     migrate.init_app(app, db)
     jwt.init_app(app)
     cors.init_app(app)
