@@ -68,7 +68,7 @@ def validate_pagination_params(args):
     except (TypeError, ValueError):
         raise APIError("Page and per_page must be integers", 400)
 
-    if page < or per_page < 1:
+    if page < 1 or per_page < 1:
         raise APIError("Page and per_page must be positive integers", 400)
 
     return page, min(per_page, 100)
