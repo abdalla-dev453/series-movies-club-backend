@@ -10,11 +10,16 @@ Flask-Migrate==4.1.0
 Flask-SQLAlchemy==3.1.1
 greenlet==3.5.5
 gunicorn==23.0.0
+iniconfig==2.3.0
 itsdangerous==2.2.0
 Jinja2==3.1.6
 Mako==1.4.1
 MarkupSafe==3.0.3
+packaging==26.3
+pluggy==1.6.0
+Pygments==2.21.0
 PyJWT==2.13.0
+pytest==9.1.1
 SQLAlchemy==2.0.52
 typing_extensions==4.16.0
 Werkzeug==3.1.8
