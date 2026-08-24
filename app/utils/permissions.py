@@ -50,3 +50,9 @@ def require_club_member(user_id, club_id):
 def require_owner(resource_user_id, current_user_id, message="You don't own this resource"):
     if resource_user_id != current_user_id:
         raise APIError(message, 403)
+
+def login_required(f):
+    def wrapper(*args, **kwargs):
+        get_current_user()
+        return f(*args, **kwargs)
+    return wrapper

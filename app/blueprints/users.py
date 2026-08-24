@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_jwt_extended import jwt_required
 
 from app.extensions import db
 from app.schemas.user_schema import user_to_private_dict, user_to_public_dict

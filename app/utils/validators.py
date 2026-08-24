@@ -18,14 +18,14 @@ def get_json_body():
     return data
 
 
-def rrequire_fields(data, *fields):
+def require_fields(data, *fields):
     missing = [ f for f in fields if not data.get(f)]
     if missing:
         raise APIError(f"Missing required fields: {', '.join(missing)}", 400)
 
 
 def validate_signup_payload(data):
-    require_fields(data, "username", "email", "password")
+    require_fields = (data, "username", "email", "password")
 
     username = str(data.get("username")).strip()
     if len(username) < USERNAME_MIN_LEN:
