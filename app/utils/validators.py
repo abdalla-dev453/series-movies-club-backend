@@ -25,7 +25,7 @@ def require_fields(data, *fields):
 
 
 def validate_signup_payload(data):
-    require_fields(data, "username", "email", "password")
+    require_fields = (data, "username", "email", "password")
 
     username = str(data.get("username")).strip()
     if len(username) < USERNAME_MIN_LEN:
