@@ -18,7 +18,7 @@ def get_json_body():
     return data
 
 
-def rrequire_fields(data, *fields):
+def require_fields(data, *fields):
     missing = [ f for f in fields if not data.get(f)]
     if missing:
         raise APIError(f"Missing required fields: {', '.join(missing)}", 400)
