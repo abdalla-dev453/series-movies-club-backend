@@ -52,7 +52,7 @@ def parse_iso_date(value, field_name="date"):
     """A strict YYYY-MM-DD string into date"""
     if value in (None, ""):
         return None
-    if not isinstance(`value`, str):
+    if not isinstance(value, str):
         raise APIError(f"Invalid {field_name} format expected YYYY-MM-DD", 400)
     try:
         return datetime.strptime(value, "%Y-%m-%d").date()

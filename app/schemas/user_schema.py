@@ -21,5 +21,10 @@ def user_to_private_dict(user):
     return data
 
 
-def serialize_users(users):
-    return [user_to_public_dict(user) for user in users]
+def serialize_user(user):
+    return {
+        "id": user.id,
+        "username": user.username,
+        "email": user.email,
+        # add other fields as needed
+    }
