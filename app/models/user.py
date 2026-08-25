@@ -31,7 +31,7 @@ class User(db.Model):
         passive_deletes=True,
     )
     club_memberships = db.relationship(
-        "ClubMembership",
+        "ClubMember",
         backref="user",
         cascade="all, delete-orphan",
         passive_deletes=True,

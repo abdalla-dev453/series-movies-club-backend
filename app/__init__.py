@@ -14,7 +14,6 @@ def create_app(config_name="development"):
     _init_jwt_callbacks(app)
 
     from app.blueprints import register_blueprints
-
     register_blueprints(app)
 
     from app.utils.error_handlers import register_error_handlers

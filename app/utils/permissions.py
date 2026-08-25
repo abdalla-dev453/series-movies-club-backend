@@ -11,6 +11,7 @@ from flask_jwt_extended import get_jwt_identity
 from app.extensions import db
 from app.utils.error_handlers import APIError
 from app.models import ClubMember, User
+from functools import wraps
 
 ADMIN_ROLE = "admin"
 MEMBER_ROLE = "member"
@@ -52,6 +53,7 @@ def require_owner(resource_user_id, current_user_id, message="You don't own this
         raise APIError(message, 403)
 
 def login_required(f):
+    @wraps(f)
     def wrapper(*args, **kwargs):
         get_current_user()
         return f(*args, **kwargs)

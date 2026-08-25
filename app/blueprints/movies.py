@@ -30,7 +30,7 @@ movies_bp = Blueprint('movies', __name__)
 movie_service = MovieService()
 
 
-@movies_bp.route('/movies/search', methods=['GET'])
+@movies_bp.route('/search', methods=['GET'])
 @login_required
 def search_movies():
     query = request.args.get('query', '').strip()
@@ -45,7 +45,7 @@ def search_movies():
     return jsonify(MovieSearchResponseSchema().dump({'items': results}))
 
 
-@movies_bp.route('/movies/<int:tmdb_id>', methods=['GET'])
+@movies_bp.route('/<int:tmdb_id>', methods=['GET'])
 @login_required
 def get_movie(tmdb_id):
     try:
