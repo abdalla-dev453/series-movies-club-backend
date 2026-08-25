@@ -1,7 +1,6 @@
 from app.blueprints.movies import movies_bp
 from app.blueprints.auth import auth_bp  
 from app.blueprints.users import users_bp
-from app.blueprints.follows import follows_bp
 from app.blueprints.reviews import reviews_bp
 from app.blueprints.posts import posts_bp
 from app.blueprints.clubs import clubs_bp
@@ -11,10 +10,17 @@ from app.blueprints.watched_movies import watched_movies_bp
 def register_blueprints(app):
     app.register_blueprint(movies_bp, url_prefix='/api/movies')
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
-    app.register_blueprint(users_bp, url_prefix='/api/users')
-    app.register_blueprint(follows_bp, url_prefix='/api/follows')
-    app.register_blueprint(reviews_bp, url_prefix='/api/reviews')
-    app.register_blueprint(posts_bp, url_prefix='/api/posts')
-    app.register_blueprint(clubs_bp, url_prefix='/api/clubs')
-    app.register_blueprint(club_members_bp, url_prefix='/api/club_members')
-    app.register_blueprint(watched_movies_bp, url_prefix='/api/watched')
+    app.register_blueprint(users_bp, url_prefix='/api')
+    app.register_blueprint(reviews_bp, url_prefix='/api')
+    app.register_blueprint(posts_bp, url_prefix='/api')
+    app.register_blueprint(clubs_bp, url_prefix='/api')
+    app.register_blueprint(club_members_bp, url_prefix='/api')
+    app.register_blueprint(watched_movies_bp, url_prefix='/api')
+
+    app.register_blueprint(auth_bp, url_prefix='/', name='auth_legacy')
+    app.register_blueprint(users_bp, url_prefix='/', name='users_legacy')
+    app.register_blueprint(reviews_bp, url_prefix='/', name='reviews_legacy')
+    app.register_blueprint(posts_bp, url_prefix='/', name='posts_legacy')
+    app.register_blueprint(clubs_bp, url_prefix='/', name='clubs_legacy')
+    app.register_blueprint(club_members_bp, url_prefix='/', name='club_members_legacy')
+    app.register_blueprint(watched_movies_bp, url_prefix='/', name='watched_movies_legacy')

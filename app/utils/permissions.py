@@ -7,7 +7,7 @@ permission check in the app goes through `ClubMember.role` -- see
 *not* used for authorization.
 """
 
-from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from app.extensions import db
 from app.utils.error_handlers import APIError
 from app.models import ClubMember, User
@@ -53,6 +53,7 @@ def require_owner(resource_user_id, current_user_id, message="You don't own this
         raise APIError(message, 403)
 
 def login_required(f):
+    @jwt_required()
     @wraps(f)
     def wrapper(*args, **kwargs):
         get_current_user()
