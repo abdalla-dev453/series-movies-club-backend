@@ -9,6 +9,9 @@ def user_to_public_dict(user):
         "username": user.username,
         "bio": user.bio,
         "avatar_url": user.avatar_url,
+        "follower_count": len(user.followers),
+        "following_count": len(user.following),
+        "post_count": len(user.posts),
     }
 
 

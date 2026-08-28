@@ -36,7 +36,8 @@ class MovieService:
         params = dict(params or {})
         params['api_key'] = current_app.config['TMDB_API_KEY']
         try:
-            resp = self._session.get(f'{TMDB_BASE_URL}{path}', params=params, timeout=5)
+            resp = self._session.get(
+                f'{TMDB_BASE_URL}{path}', params=params, timeout=5)
             resp.raise_for_status()
         except requests.HTTPError as e:
             if e.response is not None and e.response.status_code == 404:
@@ -51,7 +52,20 @@ class MovieService:
         return f'{TMDB_IMAGE_BASE}/{size}{poster_path}' if poster_path else None
 
     def search(self, query, limit=10):
-        data = self._get('/search/movie', {'query': query, 'include_adult': 'false'})
+        data = self._get(
+            '/search/movie', {'query': query, 'include_adult': 'false'})
+        return [
+            MovieSummary(
+                tmdb_id=r['id'],
+                title=r.get('title'),
+                year=(r.get('release_date') or '')[:4] or None,
+                poster_url=self._poster_url(r.get('poster_path'), 'w185'),
+            )
+            for r in data.get('results', [])[:limit]
+        ]
+
+    def trending(self, limit=10):
+        data = self._get('/trending/movie/week')
         return [
             MovieSummary(
                 tmdb_id=r['id'],
@@ -63,7 +77,8 @@ class MovieService:
         ]
 
     def get(self, tmdb_id, cast_limit=6):
-        data = self._get(f'/movie/{tmdb_id}', {'append_to_response': 'credits'})
+        data = self._get(f'/movie/{tmdb_id}',
+                         {'append_to_response': 'credits'})
 
         cast = [
             CastMember(

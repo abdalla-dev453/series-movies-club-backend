@@ -2,8 +2,9 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required
 
 from app.extensions import db
-from app.models import Post
+from app.models import Post, Review
 from app.schemas.post_schema import post_to_dict, validate_post_payload
+from app.schemas.review_schema import review_to_dict
 from app.utils.decorators import get_or_404
 from app.utils.error_handlers import APIError
 from app.utils.permissions import get_current_user, is_club_admin, is_club_member
@@ -15,7 +16,11 @@ posts_bp = Blueprint("posts", __name__, url_prefix="/posts")
 @posts_bp.get("")
 def index():
     page, per_page = validate_pagination_params(request.args)
-    pagination = Post.query.order_by(Post.created_at.desc()).paginate(
+    query = Post.query
+    club_id = request.args.get("club_id", type=int)
+    if club_id is not None:
+        query = query.filter_by(club_id=club_id)
+    pagination = query.order_by(Post.created_at.desc()).paginate(
         page=page, per_page=per_page, error_out=False
     )
     return jsonify(
@@ -45,6 +50,7 @@ def create():
         club_id=club_id,
         movie_title=fields["movie_title"],
         description=fields["description"],
+        tmdb_id=fields["tmdb_id"],
     )
     db.session.add(post)
     db.session.commit()
@@ -55,6 +61,14 @@ def create():
 def get_post(post_id):
     post = get_or_404(Post, post_id)
     return jsonify(post_to_dict(post)), 200
+
+
+@posts_bp.get("/<int:post_id>/reviews")
+def list_reviews(post_id):
+    get_or_404(Post, post_id)
+    reviews = Review.query.filter_by(post_id=post_id).order_by(
+        Review.created_at.asc()).all()
+    return jsonify({"items": [review_to_dict(review) for review in reviews]}), 200
 
 
 @posts_bp.delete("/<int:post_id>")
@@ -73,4 +87,3 @@ def delete(post_id):
     db.session.delete(post)
     db.session.commit()
     return "", 204
-

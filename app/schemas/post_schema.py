@@ -8,6 +8,8 @@ def post_to_dict(post):
         "user_id": post.user_id,
         "club_id": post.club_id,
         "movie_title": post.movie_title,
+        "tmdb_id": post.tmdb_id,
+        "author_name": post.author.username if post.author else None,
         "description": post.description,
         "created_at": post.created_at.isoformat(),
         "review_count": len(post.reviews),
@@ -28,5 +30,6 @@ def validate_post_payload(data):
     return {
         "movie_title": movie_title,
         "description": data.get("description"),
+        "tmdb_id": data.get("tmdb_id"),
         "club_id": club_id,
     }

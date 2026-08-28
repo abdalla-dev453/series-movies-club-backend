@@ -7,6 +7,7 @@ def review_to_dict(review):
         "id": review.id,
         "post_id": review.post_id,
         "user_id": review.user_id,
+        "author_name": review.author.username if review.author else None,
         "rating": review.rating,
         "comment_text": review.comment_text,
         "created_at": review.created_at.isoformat(),
