@@ -1,8 +1,11 @@
-from flask import Blueprint, jsonify, abort
-
-from app.extensions import db
+from flask import Blueprint, jsonify
 from app.models.user import User
-from app.models.follow import Follow
+from app.services.follow_service import (
+    follow_user,
+    unfollow_user,
+    list_followers,
+    list_following,
+)
 from app.schemas.user_schema import serialize_user
 from app.utils.permissions import login_required, get_current_user
 
@@ -11,43 +14,49 @@ follows_bp = Blueprint("follows", __name__, url_prefix="/users")
 
 @follows_bp.post("/<int:user_id>/follow")
 @login_required
-def follow_user(user_id):
-    current = get_current_user()
-    User.query.get_or_404(user_id)
+def follow(user_id):
+    current_user = get_current_user()
+    followee = User.query.get_or_404(user_id)
 
-    if current.id == user_id:
-        abort(400, "Cannot follow yourself")
+    follow = follow_user(current_user, followee)
 
-    if Follow.query.filter_by(follower_id=current.id, followee_id=user_id).first():
-        abort(409, "Already following this user")
-
-    db.session.add(Follow(follower_id=current.id, followee_id=user_id))
-    db.session.commit()
-    return "", 201
+    return jsonify({
+        "message": "User followed successfully",
+        "follower_id": follow.follower_id,
+        "followee_id": follow.followee_id,
+    }), 201
 
 
-@follows_bp.delete("/<int:user_id>/unfollow")
+@follows_bp.delete("/<int:user_id>/follow")
 @login_required
-def unfollow_user(user_id):
-    current = get_current_user()
-    follow = Follow.query.filter_by(follower_id=current.id, followee_id=user_id).first()
-    if not follow:
-        abort(404, "Not following this user")
+def unfollow(user_id):
+    current_user = get_current_user()
+    followee = User.query.get_or_404(user_id)
 
-    db.session.delete(follow)
-    db.session.commit()
+    unfollow_user(current_user, followee)
+
     return "", 204
 
 
 @follows_bp.get("/<int:user_id>/followers")
-def list_followers(user_id):
-    User.query.get_or_404(user_id)
-    follows = Follow.query.filter_by(followee_id=user_id).all()
-    return jsonify([serialize_user(f.follower) for f in follows])
+def followers(user_id):
+    user = User.query.get_or_404(user_id)
+
+    users = list_followers(user)
+
+    return jsonify([
+        serialize_user(user)
+        for user in users
+    ]), 200
 
 
 @follows_bp.get("/<int:user_id>/following")
-def list_following(user_id):
-    User.query.get_or_404(user_id)
-    follows = Follow.query.filter_by(follower_id=user_id).all()
-    return jsonify([serialize_user(f.followee) for f in follows])
+def following(user_id):
+    user = User.query.get_or_404(user_id)
+
+    users = list_following(user)
+
+    return jsonify([
+        serialize_user(user)
+        for user in users
+    ]), 200

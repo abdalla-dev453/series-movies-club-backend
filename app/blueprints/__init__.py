@@ -9,22 +9,42 @@ from app.blueprints.watched_movies import watched_movies_bp
 
 
 def register_blueprints(app):
-    app.register_blueprint(movies_bp, url_prefix='/api/movies')
-    app.register_blueprint(auth_bp, url_prefix='/api/auth')
-    app.register_blueprint(users_bp, url_prefix='/api/users')
-    app.register_blueprint(reviews_bp, url_prefix='/api/reviews')
-    app.register_blueprint(posts_bp, url_prefix='/api/posts')
-    app.register_blueprint(clubs_bp, url_prefix='/api/clubs')
-    app.register_blueprint(club_members_bp, url_prefix='/api/clubs')
-    app.register_blueprint(watched_movies_bp, url_prefix='/api/watched')
+    app.register_blueprint(
+        movies_bp,
+        url_prefix="/api/movies"
+    )
 
-    app.register_blueprint(auth_bp, url_prefix='/', name='auth_legacy')
-    app.register_blueprint(users_bp, url_prefix='/users', name='users_legacy')
     app.register_blueprint(
-        reviews_bp, url_prefix='/reviews', name='reviews_legacy')
-    app.register_blueprint(posts_bp, url_prefix='/posts', name='posts_legacy')
-    app.register_blueprint(clubs_bp, url_prefix='/clubs', name='clubs_legacy')
+        auth_bp,
+        url_prefix="/api/auth"
+    )
+
     app.register_blueprint(
-        club_members_bp, url_prefix='/clubs', name='club_members_legacy')
+        users_bp,
+        url_prefix="/api/users"
+    )
+
     app.register_blueprint(
-        watched_movies_bp, url_prefix='/watched', name='watched_movies_legacy')
+        reviews_bp,
+        url_prefix="/api/reviews"
+    )
+
+    app.register_blueprint(
+        posts_bp,
+        url_prefix="/api/posts"
+    )
+
+    app.register_blueprint(
+        clubs_bp,
+        url_prefix="/api/clubs"
+    )
+
+    app.register_blueprint(
+        club_members_bp,
+        url_prefix="/api/clubs"
+    )
+
+    app.register_blueprint(
+        watched_movies_bp,
+        url_prefix="/api/watched"
+    )

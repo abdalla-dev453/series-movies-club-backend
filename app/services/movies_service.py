@@ -34,10 +34,22 @@ class MovieService:
 
     def _get(self, path, params=None):
         params = dict(params or {})
-        params['api_key'] = current_app.config['TMDB_API_KEY']
+        headers = {}
+        tmdb_token = current_app.config.get('TMDB_TOKEN')
+        tmdb_api_key = current_app.config.get('TMDB_API_KEY')
+        if not tmdb_token and tmdb_api_key and tmdb_api_key.startswith('eyJ'):
+            tmdb_token = tmdb_api_key
+        if tmdb_token:
+            headers['Authorization'] = f'Bearer {tmdb_token}'
+        elif tmdb_api_key and tmdb_api_key != 'YOUR_REAL_TMDB_KEY':
+            params['api_key'] = tmdb_api_key
         try:
             resp = self._session.get(
-                f'{TMDB_BASE_URL}{path}', params=params, timeout=5)
+                f'{TMDB_BASE_URL}{path}',
+                params=params,
+                headers=headers,
+                timeout=5,
+            )
             resp.raise_for_status()
         except requests.HTTPError as e:
             if e.response is not None and e.response.status_code == 404:
@@ -52,8 +64,7 @@ class MovieService:
         return f'{TMDB_IMAGE_BASE}/{size}{poster_path}' if poster_path else None
 
     def search(self, query, limit=10):
-        data = self._get(
-            '/search/movie', {'query': query, 'include_adult': 'false'})
+        data = self._get('/search/movie', {'query': query, 'include_adult': 'false'})
         return [
             MovieSummary(
                 tmdb_id=r['id'],
@@ -71,14 +82,13 @@ class MovieService:
                 tmdb_id=r['id'],
                 title=r.get('title'),
                 year=(r.get('release_date') or '')[:4] or None,
-                poster_url=self._poster_url(r.get('poster_path'), 'w185'),
+                poster_url=self._poster_url(r.get('poster_path'), 'w342'),
             )
             for r in data.get('results', [])[:limit]
         ]
 
     def get(self, tmdb_id, cast_limit=6):
-        data = self._get(f'/movie/{tmdb_id}',
-                         {'append_to_response': 'credits'})
+        data = self._get(f'/movie/{tmdb_id}', {'append_to_response': 'credits'})
 
         cast = [
             CastMember(

@@ -27,8 +27,7 @@ def create():
     if post.user_id == current_user.id:
         raise APIError("You can't review your own post", 403)
 
-    existing = Review.query.filter_by(
-        post_id=post.id, user_id=current_user.id).first()
+    existing = Review.query.filter_by(post_id=post.id, user_id=current_user.id).first()
     if existing is not None:
         raise APIError("You already reviewed this post", 409)
 
@@ -49,21 +48,12 @@ def get_review(review_id):
     return jsonify(review_to_dict(review)), 200
 
 
-@reviews_bp.get("/post/<int:post_id>")
-def list_for_post(post_id):
-    get_or_404(Post, post_id)
-    reviews = Review.query.filter_by(post_id=post_id).order_by(
-        Review.created_at.asc()).all()
-    return jsonify({"items": [review_to_dict(review) for review in reviews]}), 200
-
-
 @reviews_bp.put("/<int:review_id>")
 @jwt_required()
 def update(review_id):
     current_user = get_current_user()
     review = get_or_404(Review, review_id)
-    require_owner(review.user_id, current_user.id,
-                  "You can only edit your own review")
+    require_owner(review.user_id, current_user.id, "You can only edit your own review")
 
     data = get_json_body()
     fields = validate_review_update_payload(data)
@@ -78,8 +68,7 @@ def update(review_id):
 def delete(review_id):
     current_user = get_current_user()
     review = get_or_404(Review, review_id)
-    require_owner(review.user_id, current_user.id,
-                  "You can only delete your own review")
+    require_owner(review.user_id, current_user.id, "You can only delete your own review")
 
     db.session.delete(review)
     db.session.commit()

@@ -1,10 +1,9 @@
 """Small request helpers shared across test modules -- not fixtures, just
 functions, kept out of conftest.py to keep that file fixture-only."""
 
-
 def signup(client, username="alice", email="alice@example.com", password="password123"):
     return client.post(
-        "/signup", json={"username": username, "email": email, "password": password}
+        "/api/auth/signup", json={"username": username, "email": email, "password": password}
     )
 
 

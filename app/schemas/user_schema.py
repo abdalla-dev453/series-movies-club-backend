@@ -1,9 +1,14 @@
-"""Serialization for User. `to_public_dict` is what every other schema
-embeds (e.g. a post's author) -- it never includes the email or password
-hash, only what's safe to show to any visitor."""
+"""Serialization for User.
+
+Public user data is safe to expose to visitors.
+Private user data is only returned for the authenticated user.
+"""
+
+from app.models import User
 
 
 def user_to_public_dict(user):
+    """Serialize a user with information safe for public viewing."""
     return {
         "id": user.id,
         "username": user.username,
@@ -11,23 +16,19 @@ def user_to_public_dict(user):
         "avatar_url": user.avatar_url,
         "follower_count": len(user.followers),
         "following_count": len(user.following),
-        "post_count": len(user.posts),
     }
 
 
 def user_to_private_dict(user):
-    """Includes account-only fields. Only ever return this for the
-    authenticated user themselves (signup/login/"my profile")."""
+    """Serialize the authenticated user's full profile."""
     data = user_to_public_dict(user)
+
     data["email"] = user.email
     data["created_at"] = user.created_at.isoformat()
+
     return data
 
 
 def serialize_user(user):
-    return {
-        "id": user.id,
-        "username": user.username,
-        "email": user.email,
-        # add other fields as needed
-    }
+    """Backward-compatible public user serializer."""
+    return user_to_public_dict(user)
