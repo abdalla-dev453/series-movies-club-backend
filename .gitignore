@@ -1,20 +1,22 @@
-__pycache__/
-*.pyc
-venv/
-.venv/
-.env
-instance/
-*.db
-.pytest_cache/
-*.egg-info/
-# Virtual Environment
+# Virtual environments
 venv/
 .venv/
 env/
+
+# Environment variables / secrets
+.env
 
 # Python cache & bytecode
 __pycache__/
 *.py[cod]
 
-# Environment variables
-.env
+# Pytest
+.pytest_cache/
+
+# Packaging
+*.egg-info/
+
+# SQLite database
+*.db
+*.sqlite
+*.sqlite3

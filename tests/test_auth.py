@@ -15,7 +15,7 @@ def test_signup_rejects_duplicate_username(client):
 
 def test_signup_rejects_short_password(client):
     resp = client.post(
-        "/signup",
+        "/api/auth/signup",
         json={"username": "bob", "email": "bob@example.com", "password": "short"},
     )
     assert resp.status_code == 400
@@ -23,14 +23,14 @@ def test_signup_rejects_short_password(client):
 
 def test_login_succeeds_with_correct_credentials(client):
     signup(client)
-    resp = client.post("/login", json={"username": "alice", "password": "password123"})
+    resp = client.post("/api/auth/login", json={"username": "alice", "password": "password123"})
     assert resp.status_code == 200
     assert "access_token" in resp.get_json()
 
 
 def test_login_rejects_wrong_password(client):
     signup(client)
-    resp = client.post("/login", json={"username": "alice", "password": "wrongpass"})
+    resp = client.post("/api/auth/login", json={"username": "alice", "password": "wrongpass"})
     assert resp.status_code == 401
 
 
@@ -38,8 +38,8 @@ def test_logout_revokes_token(client):
     resp = signup(client)
     headers = auth_headers(resp)
 
-    logout_resp = client.post("/logout", headers=headers)
+    logout_resp = client.post("/api/auth/logout", headers=headers)
     assert logout_resp.status_code == 200
 
-    me_resp = client.put("/users/1", headers=headers, json={"bio": "hi"})
+    me_resp = client.put("/api/users/1", headers=headers, json={"bio": "hi"})
     assert me_resp.status_code == 401

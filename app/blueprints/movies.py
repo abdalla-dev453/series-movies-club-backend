@@ -45,6 +45,17 @@ def search_movies():
     return jsonify(MovieSearchResponseSchema().dump({'items': results}))
 
 
+@movies_bp.route('/trending', methods=['GET'])
+@login_required
+def trending_movies():
+    try:
+        results = movie_service.trending()
+    except MovieServiceUnavailableError:
+        return jsonify({'error': 'Could not reach movie database'}), 502
+
+    return jsonify(MovieSearchResponseSchema().dump({'items': results}))
+
+
 @movies_bp.route('/<int:tmdb_id>', methods=['GET'])
 @login_required
 def get_movie(tmdb_id):
