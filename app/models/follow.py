@@ -1,6 +1,5 @@
-from datetime import datetime
-
 from app.extensions import db
+from app.utils.time import utcnow
 
 
 class Follow(db.Model):
@@ -36,7 +35,7 @@ class Follow(db.Model):
 
     created_at = db.Column(
         db.DateTime,
-        default=datetime.utcnow,
+        default=utcnow,
         nullable=False,
     )
 

@@ -1,6 +1,5 @@
-from datetime import datetime
-
 from app.extensions import db
+from app.utils.time import utcnow
 
 
 class Club(db.Model):
@@ -15,7 +14,7 @@ class Club(db.Model):
     created_by = db.Column(
         db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(db.DateTime, default=utcnow, nullable=False)
 
 
 # relationships
