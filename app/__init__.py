@@ -35,6 +35,18 @@ def _init_extensions(app):
     bcrypt.init_app(app)
     cors.init_app(app)
 
+    cors.init_app(app, resources={
+        r"/api/*": {
+            "origins": [
+                "https://vercel.app",
+                "http://localhost:5173",
+                "http://localhost:3000"
+            ],
+            "allow_headers": ["Content-Type", "Authorization"],
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+        }
+    })
+
 
 def _init_jwt_callbacks(app):
     """Wire flask-jwt-extended's hooks to our TokenBlocklist table, so a
