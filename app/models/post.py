@@ -1,6 +1,5 @@
-from datetime import datetime
-
 from app.extensions import db
+from app.utils.time import utcnow
 
 
 class Post(db.Model):
@@ -18,7 +17,7 @@ class Post(db.Model):
     )
     movie_title = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(db.DateTime, default=utcnow, nullable=False)
     tmdb_id = db.Column(db.Integer, nullable=True)
 
 

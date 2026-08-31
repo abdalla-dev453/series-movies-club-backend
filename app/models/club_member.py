@@ -1,6 +1,5 @@
-from datetime import datetime
-
 from app.extensions import db
+from app.utils.time import utcnow
 
 
 class ClubMember(db.Model):
@@ -23,7 +22,7 @@ class ClubMember(db.Model):
         db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
     role = db.Column(db.String(20), nullable=False, default="member")  # 'member' | 'admin'
-    joined_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    joined_at = db.Column(db.DateTime, default=utcnow, nullable=False)
 
     def __repr__(self):
         return f"<ClubMember club={self.club_id} user={self.user_id} role={self.role}>"
