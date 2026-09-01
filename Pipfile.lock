@@ -1,11 +1,7 @@
 {
     "_meta": {
         "hash": {
-<<<<<<< HEAD
-            "sha256": "dcafc499a3dd2b61ab962c26bcc4053bd69d62e3a01bf68ceae24086b756fa02"
-=======
-            "sha256": "3508aa97bb700c137bfb010ec9efe6603b597d938ca79ae230f47d068951193b"
->>>>>>> 15db661 (Refactor code structure for improved readability and maintainability)
+            "sha256": "0c96ae60db0cfdeb510c2aba2621a4f3bbd44d5221fe7c358a82d8a068837b2f"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -446,7 +442,6 @@
             "markers": "python_version >= '3.7'",
             "version": "==3.1.1"
         },
-<<<<<<< HEAD
         "gunicorn": {
             "hashes": [
                 "sha256:62b864895d9ebff0b2f9867ba04fe811c93121596540830c9c916d0769668447",
@@ -456,8 +451,6 @@
             "markers": "python_version >= '3.10'",
             "version": "==26.2.0"
         },
-=======
->>>>>>> 15db661 (Refactor code structure for improved readability and maintainability)
         "idna": {
             "hashes": [
                 "sha256:048adeaf8c2d788c40fee287673ccaa74c24ffd8dcf09ffa555a2fbb59f10ac8",
@@ -485,8 +478,6 @@
             "markers": "python_version >= '3.8'",
             "version": "==6.4.5"
         },
-<<<<<<< HEAD
-=======
         "iniconfig": {
             "hashes": [
                 "sha256:c76315c77db068650d49c5b56314774a7804df16fee4402c1f19d6d15d8c4730",
@@ -495,7 +486,6 @@
             "markers": "python_version >= '3.10'",
             "version": "==2.3.0"
         },
->>>>>>> 15db661 (Refactor code structure for improved readability and maintainability)
         "itsdangerous": {
             "hashes": [
                 "sha256:c6242fc49e35958c8b15141343aa660db5fc54d4f13a1db01a3f5891b98700ef",
@@ -625,8 +615,6 @@
             "index": "pypi",
             "version": "==1.7.4"
         },
-<<<<<<< HEAD
-=======
         "pluggy": {
             "hashes": [
                 "sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3",
@@ -643,7 +631,6 @@
             "markers": "python_version >= '3.9'",
             "version": "==2.21.0"
         },
->>>>>>> 15db661 (Refactor code structure for improved readability and maintainability)
         "pyjwt": {
             "hashes": [
                 "sha256:3b02fb0f44517787776cf48f2ae25d8e14f300e6d7545a4315cee571a415e850",
@@ -653,8 +640,6 @@
             "markers": "python_version >= '3.8'",
             "version": "==2.9.0"
         },
-<<<<<<< HEAD
-=======
         "pytest": {
             "hashes": [
                 "sha256:1088fbde8f2b49d95a549a195707afa7a76a3ce9bcadc26b6d71f0ffda5fe313",
@@ -664,7 +649,6 @@
             "markers": "python_version >= '3.10'",
             "version": "==9.1.1"
         },
->>>>>>> 15db661 (Refactor code structure for improved readability and maintainability)
         "python-dotenv": {
             "hashes": [
                 "sha256:e324ee90a023d808f1959c46bcbc04446a10ced277783dc6ee09987c37ec10ca",
