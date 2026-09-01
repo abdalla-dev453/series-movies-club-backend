@@ -1,3 +1,4 @@
+from app.schemas.club_schema import club_to_dict
 from app.utils.error_handlers import APIError
 from app.utils.validators import require_fields
 
@@ -7,9 +8,11 @@ def post_to_dict(post):
         "id": post.id,
         "user_id": post.user_id,
         "club_id": post.club_id,
+        "club": club_to_dict(post.club) if post.club else None,
         "movie_title": post.movie_title,
         "description": post.description,
         "tmdb_id": post.tmdb_id,
+        "author_name": post.author.username if post.author else None,
         "created_at": post.created_at.isoformat(),
         "review_count": len(post.reviews),
     }
