@@ -1,10 +1,17 @@
-import random
+import os
 from datetime import datetime, timezone
 from werkzeug.security import generate_password_hash
 
 # Import your Flask app instance and SQLAlchemy db instance
 from app import create_app, db
 from app.models import User, Club, ClubMember, Follow, Post, Review, WatchedMovie, TokenBlocklist
+
+
+def _require_seed_confirmation():
+    if os.environ.get("ALLOW_SEED", "").lower() not in {"1", "true", "yes", "y"}:
+        raise SystemExit(
+            "Seed is disabled by default. Set ALLOW_SEED=true to intentionally reset the database."
+        )
 
 
 def seed_database():
@@ -29,10 +36,14 @@ def seed_database():
         print("Seeding users...")
         hashed_password = generate_password_hash("password123")
         users_data = [
-            {"username": "alice", "email": "alice@example.com", "bio": "Sci-Fi fanatic & movie reviewer.", "avatar_url": "https://api.dicebear.com/7.x/bottts/svg?seed=alice"},
-            {"username": "bob", "email": "bob@example.com", "bio": "Horror movie buff.", "avatar_url": "https://api.dicebear.com/7.x/bottts/svg?seed=bob"},
-            {"username": "charlie", "email": "charlie@example.com", "bio": "Drama and indie film enjoyer.", "avatar_url": "https://api.dicebear.com/7.x/bottts/svg?seed=charlie"},
-            {"username": "diana", "email": "diana@example.com", "bio": "Action movie enthusiast.", "avatar_url": "https://api.dicebear.com/7.x/bottts/svg?seed=diana"},
+            {"username": "alice", "email": "alice@example.com", "bio": "Sci-Fi fanatic & movie reviewer.",
+                "avatar_url": "https://api.dicebear.com/7.x/bottts/svg?seed=alice"},
+            {"username": "bob", "email": "bob@example.com", "bio": "Horror movie buff.",
+                "avatar_url": "https://api.dicebear.com/7.x/bottts/svg?seed=bob"},
+            {"username": "charlie", "email": "charlie@example.com", "bio": "Drama and indie film enjoyer.",
+                "avatar_url": "https://api.dicebear.com/7.x/bottts/svg?seed=charlie"},
+            {"username": "diana", "email": "diana@example.com", "bio": "Action movie enthusiast.",
+                "avatar_url": "https://api.dicebear.com/7.x/bottts/svg?seed=diana"},
         ]
 
         users = []
@@ -53,9 +64,12 @@ def seed_database():
         # 3. Seed Clubs
         print("Seeding clubs...")
         clubs_data = [
-            {"name": "Sci-Fi Seekers", "genre": "Sci-Fi", "description": "Discussing mind-bending space and time travel films.", "created_by": users[0].id},
-            {"name": "Midnight Frights", "genre": "Horror", "description": "All things spooky, slashers, and psychological horror.", "created_by": users[1].id},
-            {"name": "Indie Film Lounge", "genre": "Drama", "description": "Dedicated to independent cinema and deep analysis.", "created_by": users[2].id},
+            {"name": "Sci-Fi Seekers", "genre": "Sci-Fi",
+                "description": "Discussing mind-bending space and time travel films.", "created_by": users[0].id},
+            {"name": "Midnight Frights", "genre": "Horror",
+                "description": "All things spooky, slashers, and psychological horror.", "created_by": users[1].id},
+            {"name": "Indie Film Lounge", "genre": "Drama",
+                "description": "Dedicated to independent cinema and deep analysis.", "created_by": users[2].id},
         ]
 
         clubs = []
@@ -76,23 +90,33 @@ def seed_database():
         print("Seeding club memberships...")
         memberships = [
             # Creators as admins
-            ClubMember(club_id=clubs[0].id, user_id=users[0].id, role="admin", joined_at=datetime.now(timezone.utc)),
-            ClubMember(club_id=clubs[1].id, user_id=users[1].id, role="admin", joined_at=datetime.now(timezone.utc)),
-            ClubMember(club_id=clubs[2].id, user_id=users[2].id, role="admin", joined_at=datetime.now(timezone.utc)),
+            ClubMember(club_id=clubs[0].id, user_id=users[0].id,
+                       role="admin", joined_at=datetime.now(timezone.utc)),
+            ClubMember(club_id=clubs[1].id, user_id=users[1].id,
+                       role="admin", joined_at=datetime.now(timezone.utc)),
+            ClubMember(club_id=clubs[2].id, user_id=users[2].id,
+                       role="admin", joined_at=datetime.now(timezone.utc)),
             # Regular members
-            ClubMember(club_id=clubs[0].id, user_id=users[1].id, role="member", joined_at=datetime.now(timezone.utc)),
-            ClubMember(club_id=clubs[0].id, user_id=users[3].id, role="member", joined_at=datetime.now(timezone.utc)),
-            ClubMember(club_id=clubs[1].id, user_id=users[2].id, role="member", joined_at=datetime.now(timezone.utc)),
+            ClubMember(club_id=clubs[0].id, user_id=users[1].id,
+                       role="member", joined_at=datetime.now(timezone.utc)),
+            ClubMember(club_id=clubs[0].id, user_id=users[3].id,
+                       role="member", joined_at=datetime.now(timezone.utc)),
+            ClubMember(club_id=clubs[1].id, user_id=users[2].id,
+                       role="member", joined_at=datetime.now(timezone.utc)),
         ]
         db.session.add_all(memberships)
 
         # 5. Seed Follows
         print("Seeding follows...")
         follows = [
-            Follow(follower_id=users[0].id, followee_id=users[1].id, created_at=datetime.now(timezone.utc)),
-            Follow(follower_id=users[0].id, followee_id=users[2].id, created_at=datetime.now(timezone.utc)),
-            Follow(follower_id=users[1].id, followee_id=users[0].id, created_at=datetime.now(timezone.utc)),
-            Follow(follower_id=users[3].id, followee_id=users[0].id, created_at=datetime.now(timezone.utc)),
+            Follow(follower_id=users[0].id, followee_id=users[1].id,
+                   created_at=datetime.now(timezone.utc)),
+            Follow(follower_id=users[0].id, followee_id=users[2].id,
+                   created_at=datetime.now(timezone.utc)),
+            Follow(follower_id=users[1].id, followee_id=users[0].id,
+                   created_at=datetime.now(timezone.utc)),
+            Follow(follower_id=users[3].id, followee_id=users[0].id,
+                   created_at=datetime.now(timezone.utc)),
         ]
         db.session.add_all(follows)
 
@@ -170,7 +194,8 @@ def seed_database():
             WatchedMovie(
                 user_id=users[0].id,
                 movie_title="Arrival",
-                watched_date=datetime.strptime("2026-08-01", "%Y-%m-%d").date(),
+                watched_date=datetime.strptime(
+                    "2026-08-01", "%Y-%m-%d").date(),
                 personal_rating=5,
                 notes="Fascinating take on language and linear time.",
                 created_at=datetime.now(timezone.utc)
@@ -178,7 +203,8 @@ def seed_database():
             WatchedMovie(
                 user_id=users[1].id,
                 movie_title="Hereditary",
-                watched_date=datetime.strptime("2026-08-10", "%Y-%m-%d").date(),
+                watched_date=datetime.strptime(
+                    "2026-08-10", "%Y-%m-%d").date(),
                 personal_rating=4,
                 notes="Tense and disturbing ending sequence.",
                 created_at=datetime.now(timezone.utc)
@@ -192,4 +218,5 @@ def seed_database():
 
 
 if __name__ == "__main__":
+    _require_seed_confirmation()
     seed_database()

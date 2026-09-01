@@ -11,12 +11,19 @@ from app.utils.error_handlers import APIError
 from app.utils.permissions import ADMIN_ROLE, MEMBER_ROLE, get_membership, is_club_admin
 
 
-def create_club(creator, name, genre, description=None):
-    club = Club(name=name, genre=genre, description=description, created_by=creator.id)
+def create_club(creator, name, genre, description=None, background_url=None):
+    club = Club(
+        name=name,
+        genre=genre,
+        description=description,
+        background_url=background_url,
+        created_by=creator.id,
+    )
     db.session.add(club)
     db.session.flush()  # assigns club.id without committing yet
 
-    membership = ClubMember(club_id=club.id, user_id=creator.id, role=ADMIN_ROLE)
+    membership = ClubMember(
+        club_id=club.id, user_id=creator.id, role=ADMIN_ROLE)
     db.session.add(membership)
     db.session.commit()
     return club

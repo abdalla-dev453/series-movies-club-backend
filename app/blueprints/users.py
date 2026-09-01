@@ -13,6 +13,30 @@ from app.models import User
 users_bp = Blueprint("users", __name__, url_prefix="/users")
 
 
+@users_bp.get("")
+@jwt_required()
+def list_users():
+    query = request.args.get("query", "").strip()
+    page = max(int(request.args.get("page", 1)), 1)
+    per_page = min(max(int(request.args.get("perPage", 10)), 1), 50)
+
+    base_query = User.query
+    if query:
+        base_query = base_query.filter(User.username.ilike(f"%{query}%"))
+
+    pagination = base_query.order_by(User.username.asc()).paginate(
+        page=page, per_page=per_page, error_out=False
+    )
+
+    return jsonify({
+        "items": [user_to_public_dict(user) for user in pagination.items],
+        "page": pagination.page,
+        "per_page": pagination.per_page,
+        "total_items": pagination.total,
+        "total_pages": pagination.pages,
+    }), 200
+
+
 @users_bp.route("/<int:user_id>", methods=["GET"])
 def get_user(user_id):
     user = get_or_404(User, user_id)
