@@ -7,6 +7,7 @@ def watched_movie_to_dict(entry):
         "id": entry.id,
         "user_id": entry.user_id,
         "movie_title": entry.movie_title,
+        "poster_url": entry.poster_url,
         "watched_date": entry.watched_date.isoformat() if entry.watched_date else None,
         "personal_rating": entry.personal_rating,
         "notes": entry.notes,
@@ -23,10 +24,18 @@ def validate_watched_movie_payload(data):
 
     rating = data.get("personal_rating")
     if rating is not None and (not isinstance(rating, int) or isinstance(rating, bool) or not (1 <= rating <= 5)):
-        raise APIError("personal_rating must be an integer between 1 and 5", 400)
+        raise APIError(
+            "personal_rating must be an integer between 1 and 5", 400)
+
+    poster_url = data.get("poster_url")
+    if poster_url is not None:
+        poster_url = str(poster_url).strip() or None
+        if len(poster_url or '') > 500:
+            raise APIError("poster_url is too long", 400)
 
     return {
         "movie_title": movie_title,
+        "poster_url": poster_url,
         "watched_date": parse_iso_date(data.get("watched_date"), "watched_date"),
         "personal_rating": rating,
         "notes": data.get("notes"),

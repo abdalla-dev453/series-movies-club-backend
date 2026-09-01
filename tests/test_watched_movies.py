@@ -6,10 +6,17 @@ def test_add_watched_movie(client):
     resp = client.post(
         "/api/watched",
         headers=headers,
-        json={"movie_title": "Parasite", "watched_date": "2024-01-15", "personal_rating": 5},
+        json={
+            "movie_title": "Parasite",
+            "watched_date": "2024-01-15",
+            "personal_rating": 5,
+            "poster_url": "https://example.com/poster.jpg",
+        },
     )
     assert resp.status_code == 201
-    assert resp.get_json()["movie_title"] == "Parasite"
+    payload = resp.get_json()
+    assert payload["movie_title"] == "Parasite"
+    assert payload["poster_url"] == "https://example.com/poster.jpg"
 
 
 def test_invalid_date_format_is_rejected(client):
@@ -23,11 +30,14 @@ def test_invalid_date_format_is_rejected(client):
 
 
 def test_cannot_delete_another_users_watched_entry(client):
-    _, headers_a = signup_and_login(client, username="alice", email="a@example.com")
-    entry_resp = client.post("/api/watched", headers=headers_a, json={"movie_title": "Dune"})
+    _, headers_a = signup_and_login(
+        client, username="alice", email="a@example.com")
+    entry_resp = client.post(
+        "/api/watched", headers=headers_a, json={"movie_title": "Dune"})
     entry_id = entry_resp.get_json()["id"]
 
-    _, headers_b = signup_and_login(client, username="bob", email="b@example.com")
+    _, headers_b = signup_and_login(
+        client, username="bob", email="b@example.com")
     resp = client.delete(f"/api/watched/{entry_id}", headers=headers_b)
     assert resp.status_code == 403
 

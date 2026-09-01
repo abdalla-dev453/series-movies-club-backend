@@ -35,17 +35,25 @@ def _ensure_legacy_sqlite_columns(app):
         from sqlalchemy import inspect
 
         inspector = inspect(db.engine)
-        if not inspector.has_table("clubs"):
-            return
 
-        columns = [row["name"] for row in inspector.get_columns("clubs")]
-        if "background_url" in columns:
-            return
+        if inspector.has_table("clubs"):
+            columns = [row["name"] for row in inspector.get_columns("clubs")]
+            if "background_url" not in columns:
+                with db.engine.begin() as connection:
+                    connection.execute(
+                        db.text(
+                            "ALTER TABLE clubs ADD COLUMN background_url VARCHAR(255)")
+                    )
 
-        with db.engine.begin() as connection:
-            connection.execute(
-                db.text("ALTER TABLE clubs ADD COLUMN background_url VARCHAR(255)")
-            )
+        if inspector.has_table("watched_movies"):
+            columns = [row["name"]
+                       for row in inspector.get_columns("watched_movies")]
+            if "poster_url" not in columns:
+                with db.engine.begin() as connection:
+                    connection.execute(
+                        db.text(
+                            "ALTER TABLE watched_movies ADD COLUMN poster_url VARCHAR(500)")
+                    )
 
 
 def _init_extensions(app):

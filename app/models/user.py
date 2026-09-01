@@ -8,7 +8,8 @@ class User(db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), index=True, nullable=False, unique=True)
+    username = db.Column(db.String(64), index=True,
+                         nullable=False, unique=True)
     email = db.Column(db.String(120), index=True, nullable=False, unique=True)
     password_hash = db.Column(db.String(128), nullable=False)
     bio = db.Column(db.String(255), nullable=True)
@@ -30,6 +31,12 @@ class User(db.Model):
     )
     club_memberships = db.relationship(
         "ClubMember",
+        backref="user",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
+    club_messages = db.relationship(
+        "ClubMessage",
         backref="user",
         cascade="all, delete-orphan",
         passive_deletes=True,

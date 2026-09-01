@@ -25,6 +25,12 @@ class Club(db.Model):
     posts = db.relationship(
         "Post", backref="club", passive_deletes=True, cascade="all, delete-orphan"
     )
+    messages = db.relationship(
+        "ClubMessage",
+        backref="club",
+        passive_deletes=True,
+        cascade="all, delete-orphan",
+    )
     founder = db.relationship("User", foreign_keys=[created_by])
 
     def __repr__(self):
