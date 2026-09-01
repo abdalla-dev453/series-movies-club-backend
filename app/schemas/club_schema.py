@@ -30,6 +30,9 @@ def club_to_dict(club, current_user_id=None):
         "name": club.name,
         "genre": club.genre,
         "description": club.description,
+        "text": club.description,
+        "background_url": club.background_url,
+        "club_text": club.description,
 
         # Creator/founder
         "created_by": club.created_by,
@@ -77,12 +80,23 @@ def validate_club_payload(data, *, partial=False):
     if genre is not None:
         cleaned["genre"] = str(genre).strip()
 
-    if "description" in data:
-        description = data["description"]
+    for field_name, target_name in (
+        ("description", "description"),
+        ("text", "description"),
+        ("club_text", "description"),
+        ("background_url", "background_url"),
+        ("backgroundImageUrl", "background_url"),
+        ("cover_image", "background_url"),
+        ("coverImage", "background_url"),
+    ):
+        if field_name not in data:
+            continue
 
-        if description is not None:
-            description = str(description).strip()
+        value = data[field_name]
 
-        cleaned["description"] = description
+        if value is not None:
+            value = str(value).strip()
+
+        cleaned[target_name] = value
 
     return cleaned

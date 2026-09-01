@@ -1,8 +1,12 @@
 import os
 from datetime import timedelta
+from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
+
+BASE_DIR = Path(__file__).resolve().parent
+DEFAULT_DB_PATH = BASE_DIR / "instance" / "dev.db"
 
 
 class Config:
@@ -10,7 +14,7 @@ class Config:
 
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         "DATABASE_URL",
-        "sqlite:///dev.db"
+        f"sqlite:///{DEFAULT_DB_PATH}"
     )
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False

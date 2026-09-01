@@ -3,11 +3,11 @@ from flask_jwt_extended import jwt_required
 
 from app.extensions import db
 from app.schemas.user_schema import user_to_private_dict, user_to_public_dict
-from app.services.follow_service import follow_user, unfollow_user, list_followers, list_following
+from app.services.follow_service import follow_user, unfollow_user, list_followers, list_following, list_mutual
 from app.utils.error_handlers import APIError
 from app.utils.decorators import get_or_404
 from app.utils.permissions import get_current_user, require_owner
-from app.utils.validators import get_json_body, validate_pagination_params
+from app.utils.validators import get_json_body
 from app.models import User
 
 users_bp = Blueprint("users", __name__, url_prefix="/users")
@@ -17,24 +17,25 @@ users_bp = Blueprint("users", __name__, url_prefix="/users")
 @jwt_required()
 def list_users():
     current_user = get_current_user()
-    page, per_page = validate_pagination_params(request.args)
+    query = request.args.get("query", "").strip()
+    page = max(int(request.args.get("page", 1)), 1)
+    per_page = min(max(int(request.args.get("perPage", 10)), 1), 50)
 
-    pagination = (
-        User.query
-        .filter(User.id != current_user.id)
-        .order_by(User.created_at.desc())
-        .paginate(page=page, per_page=per_page, error_out=False)
+    base_query = User.query.filter(User.id != current_user.id)
+    if query:
+        base_query = base_query.filter(User.username.ilike(f"%{query}%"))
+
+    pagination = base_query.order_by(User.username.asc()).paginate(
+        page=page, per_page=per_page, error_out=False
     )
 
-    return jsonify(
-        {
-            "items": [user_to_public_dict(user) for user in pagination.items],
-            "page": pagination.page,
-            "per_page": pagination.per_page,
-            "total_items": pagination.total,
-            "total_pages": pagination.pages,
-        }
-    ), 200
+    return jsonify({
+        "items": [user_to_public_dict(user) for user in pagination.items],
+        "page": pagination.page,
+        "per_page": pagination.per_page,
+        "total_items": pagination.total,
+        "total_pages": pagination.pages,
+    }), 200
 
 
 @users_bp.route("/<int:user_id>", methods=["GET"])
@@ -49,18 +50,31 @@ def update_user(user_id):
     user = get_or_404(User, user_id)
     current_user = get_current_user()
     current_user_id = current_user.id
-    require_owner(user.id, current_user_id, "You can only edit your own profile")
+    require_owner(user.id, current_user_id,
+                  "You can only edit your own profile")
 
     data = get_json_body()
-    for field in ("bio", "avatar_url"):
-        if field in data:
-            value = data[field]
-            if value is not None and not isinstance(value, str):
-                raise APIError(f"{field} must be a string", 400)
-            setattr(user, field, value)
+    field_aliases = {
+        "username": "username",
+        "bio": "bio",
+        "avatar_url": "avatar_url",
+        "profile_image_url": "avatar_url",
+        "profileImageUrl": "avatar_url",
+    }
+
+    for incoming_field, target_field in field_aliases.items():
+        if incoming_field not in data:
+            continue
+
+        value = data[incoming_field]
+        if value is not None and not isinstance(value, str):
+            raise APIError(f"{incoming_field} must be a string", 400)
+
+        setattr(user, target_field, value)
+
     db.session.commit()
 
-    return jsonify(user_to_private_dict(current_user)), 200
+    return jsonify(user_to_private_dict(user)), 200
 
 
 @users_bp.post("/<int:user_id>/follow")
@@ -91,3 +105,9 @@ def followers(user_id):
 def following(user_id):
     user = get_or_404(User, user_id)
     return jsonify([user_to_public_dict(u) for u in list_following(user)]), 200
+
+
+@users_bp.get("/<int:user_id>/mutual")
+def mutual(user_id):
+    user = get_or_404(User, user_id)
+    return jsonify([user_to_public_dict(u) for u in list_mutual(user)]), 200

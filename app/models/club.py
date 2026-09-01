@@ -9,6 +9,7 @@ class Club(db.Model):
     name = db.Column(db.String(100), nullable=False)
     genre = db.Column(db.String(50), nullable=False, index=True)
     description = db.Column(db.Text, nullable=True)
+    background_url = db.Column(db.String(255), nullable=True)
     # Display-only "founded by" -- never a permission source (see ClubMember.role).
     # SET NULL so the club survives if the creator's account is deleted.
     created_by = db.Column(

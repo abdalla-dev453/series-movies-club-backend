@@ -55,6 +55,7 @@ def create():
         fields["name"],
         fields["genre"],
         fields.get("description"),
+        fields.get("background_url"),
     )
 
     return jsonify(

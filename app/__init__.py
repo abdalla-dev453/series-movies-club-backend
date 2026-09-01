@@ -14,6 +14,7 @@ def create_app(config_name="development"):
         return jsonify({"status": "healthy"}), 200
 
     _init_extensions(app)
+    _ensure_legacy_sqlite_columns(app)
     _init_jwt_callbacks(app)
 
     from app.blueprints import register_blueprints
@@ -25,9 +26,34 @@ def create_app(config_name="development"):
     return app
 
 
+def _ensure_legacy_sqlite_columns(app):
+    """Backfill legacy SQLite databases created before newer club/user fields existed."""
+    if "sqlite" not in str(app.config.get("SQLALCHEMY_DATABASE_URI", "")):
+        return
+
+    with app.app_context():
+        from sqlalchemy import inspect
+
+        inspector = inspect(db.engine)
+        if not inspector.has_table("clubs"):
+            return
+
+        columns = [row["name"] for row in inspector.get_columns("clubs")]
+        if "background_url" in columns:
+            return
+
+        with db.engine.begin() as connection:
+            connection.execute(
+                db.text("ALTER TABLE clubs ADD COLUMN background_url VARCHAR(255)")
+            )
+
+
 def _init_extensions(app):
     db.init_app(app)
-    from app import models  # noqa: F401 -- registers tables on db.metadata
+    with app.app_context():
+        from app import models  # noqa: F401 -- registers tables on db.metadata
+        db.create_all()  # ensure table definitions exist before legacy checks run
+
     migrate.init_app(app, db)
     jwt.init_app(app)
     bcrypt.init_app(app)

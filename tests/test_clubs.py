@@ -1,8 +1,41 @@
+import sqlite3
+from app import create_app
 from tests.helpers import signup_and_login
 
 
 def create_club(client, headers, name="Horror Fans", genre="Horror"):
     return client.post("/api/clubs", headers=headers, json={"name": name, "genre": genre})
+
+
+def test_legacy_club_db_adds_missing_background_url_column(tmp_path, monkeypatch):
+    db_path = tmp_path / "legacy.db"
+    monkeypatch.setenv("DATABASE_URL", f"sqlite:///{db_path}")
+
+    with sqlite3.connect(db_path) as conn:
+        conn.execute(
+            """
+            CREATE TABLE clubs (
+                id INTEGER PRIMARY KEY,
+                name VARCHAR(100) NOT NULL,
+                genre VARCHAR(50) NOT NULL,
+                description TEXT,
+                created_by INTEGER,
+                created_at DATETIME NOT NULL
+            )
+            """
+        )
+        conn.commit()
+
+    app = create_app("development")
+    with app.app_context():
+        from sqlalchemy import text
+
+        columns = app.extensions["sqlalchemy"].session.execute(
+            text("PRAGMA table_info(clubs)")
+        ).fetchall()
+
+    names = {column[1] for column in columns}
+    assert "background_url" in names
 
 
 def test_create_club_makes_creator_an_admin(client):
@@ -29,16 +62,54 @@ def test_list_clubs_is_paginated(client):
 
 
 def test_only_admin_can_update_club(client):
-    _, headers_a = signup_and_login(client, username="alice", email="a@example.com")
-    _, headers_b = signup_and_login(client, username="bob", email="b@example.com")
+    _, headers_a = signup_and_login(
+        client, username="alice", email="a@example.com")
+    _, headers_b = signup_and_login(
+        client, username="bob", email="b@example.com")
 
     resp = create_club(client, headers_a)
     club_id = resp.get_json()["id"]
 
-    forbidden = client.put(f"/api/clubs/{club_id}", headers=headers_b, json={"name": "Hijacked"})
+    forbidden = client.put(
+        f"/api/clubs/{club_id}", headers=headers_b, json={"name": "Hijacked"})
     assert forbidden.status_code == 403
 
 
 def test_create_club_requires_auth(client):
-    resp = client.post("/api/clubs", json={"name": "No Auth", "genre": "Comedy"})
+    resp = client.post(
+        "/api/clubs", json={"name": "No Auth", "genre": "Comedy"})
     assert resp.status_code == 401
+
+
+def test_admin_can_update_club_background_and_text(client):
+    _, headers = signup_and_login(
+        client, username="alice", email="alice@example.com")
+    resp = create_club(client, headers, name="Movie Night", genre="Comedy")
+    club_id = resp.get_json()["id"]
+
+    update_resp = client.put(
+        f"/api/clubs/{club_id}",
+        headers=headers,
+        json={
+            "background_url": "https://example.com/club-banner.jpg",
+            "description": "Fresh movie chat every Friday.",
+        },
+    )
+
+    assert update_resp.status_code == 200
+    payload = update_resp.get_json()
+    assert payload["background_url"] == "https://example.com/club-banner.jpg"
+    assert payload["description"] == "Fresh movie chat every Friday."
+
+
+def test_users_can_be_searched_by_username(client):
+    _, headers = signup_and_login(
+        client, username="alice", email="alice@example.com")
+    signup_and_login(client, username="bobby", email="bobby@example.com")
+
+    resp = client.get("/api/users?query=bob", headers=headers)
+
+    assert resp.status_code == 200
+    users = resp.get_json()["items"]
+    usernames = {user["username"] for user in users}
+    assert "bobby" in usernames
