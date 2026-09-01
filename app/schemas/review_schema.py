@@ -1,13 +1,19 @@
+from app.schemas.club_schema import club_to_dict
 from app.utils.error_handlers import APIError
 from app.utils.validators import require_fields, validate_rating
 
 
 def review_to_dict(review):
+    club = None
+    if review.post and review.post.club:
+        club = club_to_dict(review.post.club)
+
     return {
         "id": review.id,
         "post_id": review.post_id,
         "user_id": review.user_id,
         "author_name": review.author.username if review.author else None,
+        "club": club,
         "rating": review.rating,
         "comment_text": review.comment_text,
         "created_at": review.created_at.isoformat(),
