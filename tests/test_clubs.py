@@ -44,3 +44,35 @@ def test_only_admin_can_update_club(client):
 def test_create_club_requires_auth(client):
     resp = client.post("/api/clubs", json={"name": "No Auth", "genre": "Comedy"})
     assert resp.status_code == 401
+
+
+def test_admin_can_update_club_background_and_text(client):
+    _, headers = signup_and_login(client, username="alice", email="alice@example.com")
+    resp = create_club(client, headers, name="Movie Night", genre="Comedy")
+    club_id = resp.get_json()["id"]
+
+    update_resp = client.put(
+        f"/api/clubs/{club_id}",
+        headers=headers,
+        json={
+            "background_url": "https://example.com/club-banner.jpg",
+            "description": "Fresh movie chat every Friday.",
+        },
+    )
+
+    assert update_resp.status_code == 200
+    payload = update_resp.get_json()
+    assert payload["background_url"] == "https://example.com/club-banner.jpg"
+    assert payload["description"] == "Fresh movie chat every Friday."
+
+
+def test_users_can_be_searched_by_username(client):
+    _, headers = signup_and_login(client, username="alice", email="alice@example.com")
+    signup_and_login(client, username="bobby", email="bobby@example.com")
+
+    resp = client.get("/api/users?query=bob", headers=headers)
+
+    assert resp.status_code == 200
+    users = resp.get_json()["items"]
+    usernames = {user["username"] for user in users}
+    assert "bobby" in usernames
