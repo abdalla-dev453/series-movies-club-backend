@@ -16,11 +16,12 @@ users_bp = Blueprint("users", __name__, url_prefix="/users")
 @users_bp.get("")
 @jwt_required()
 def list_users():
+    current_user = get_current_user()
     query = request.args.get("query", "").strip()
     page = max(int(request.args.get("page", 1)), 1)
     per_page = min(max(int(request.args.get("perPage", 10)), 1), 50)
 
-    base_query = User.query
+    base_query = User.query.filter(User.id != current_user.id)
     if query:
         base_query = base_query.filter(User.username.ilike(f"%{query}%"))
 

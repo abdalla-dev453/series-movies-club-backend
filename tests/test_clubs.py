@@ -1,8 +1,6 @@
 import sqlite3
 from pathlib import Path
 
-from wsgiref import headers
-
 from app import create_app
 from tests.helpers import signup_and_login
 
