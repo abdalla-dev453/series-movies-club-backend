@@ -50,7 +50,10 @@ def _ensure_legacy_sqlite_columns(app):
 
 def _init_extensions(app):
     db.init_app(app)
-    from app import models  # noqa: F401 -- registers tables on db.metadata
+    with app.app_context():
+        from app import models  # noqa: F401 -- registers tables on db.metadata
+        db.create_all()  # ensure table definitions exist before legacy checks run
+
     migrate.init_app(app, db)
     jwt.init_app(app)
     bcrypt.init_app(app)
