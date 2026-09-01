@@ -5,7 +5,7 @@ env/
 
 # Environment variables / secrets
 .env
-
+app/.env
 # Python cache & bytecode
 __pycache__/
 *.py[cod]

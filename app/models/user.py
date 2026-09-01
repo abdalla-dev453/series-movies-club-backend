@@ -15,7 +15,6 @@ class User(db.Model):
     avatar_url = db.Column(db.String(255), nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
 
-
     # relationships
     posts = db.relationship(
         "Post", backref="author", cascade="all, delete-orphan", passive_deletes=True

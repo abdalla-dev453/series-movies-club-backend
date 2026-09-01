@@ -4,8 +4,6 @@ Public user data is safe to expose to visitors.
 Private user data is only returned for the authenticated user.
 """
 
-from app.models import User
-
 
 def user_to_public_dict(user):
     """Serialize a user with information safe for public viewing."""
