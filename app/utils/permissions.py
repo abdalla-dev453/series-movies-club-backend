@@ -52,6 +52,7 @@ def require_owner(resource_user_id, current_user_id, message="You don't own this
     if resource_user_id != current_user_id:
         raise APIError(message, 403)
 
+
 def login_required(f):
     @jwt_required()
     @wraps(f)

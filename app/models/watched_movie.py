@@ -19,6 +19,5 @@ class WatchedMovie(db.Model):
     notes = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
-
     def __repr__(self):
         return f"<WatchedMovie {self.movie_title!r} user={self.user_id}>"

@@ -26,6 +26,5 @@ class Club(db.Model):
     )
     founder = db.relationship("User", foreign_keys=[created_by])
 
-
     def __repr__(self):
         return f"<Club {self.name}>"

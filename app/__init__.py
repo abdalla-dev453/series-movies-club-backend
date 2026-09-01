@@ -8,12 +8,10 @@ def create_app(config_name="development"):
     app = Flask(__name__)
     app.config.from_object(config_by_name[config_name])
 
-
     @app.get("/health")
     @app.get("/api/health")
     def health_check():
         return jsonify({"status": "healthy"}), 200
-
 
     _init_extensions(app)
     _init_jwt_callbacks(app)

@@ -1,5 +1,3 @@
-from wsgiref import headers
-
 from tests.helpers import signup_and_login
 
 

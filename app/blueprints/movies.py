@@ -16,7 +16,6 @@ request/response details live in app/services/movies_service.py.
 """
 
 from flask import Blueprint, jsonify, request
-from marshmallow import ValidationError
 
 from app.utils.permissions import login_required
 from app.schemas.movies import MovieSearchResponseSchema, MovieDetailSchema
