@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required
 
 from app.extensions import db
@@ -7,7 +7,7 @@ from app.services.follow_service import follow_user, unfollow_user, list_followe
 from app.utils.error_handlers import APIError
 from app.utils.decorators import get_or_404
 from app.utils.permissions import get_current_user, require_owner
-from app.utils.validators import get_json_body
+from app.utils.validators import get_json_body, validate_pagination_params
 from app.models import User
 
 users_bp = Blueprint("users", __name__, url_prefix="/users")

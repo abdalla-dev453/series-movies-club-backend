@@ -1,8 +1,7 @@
-from datetime import datetime
-
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app.extensions import db
+from app.utils.time import utcnow
 
 
 class User(db.Model):
@@ -14,7 +13,7 @@ class User(db.Model):
     password_hash = db.Column(db.String(128), nullable=False)
     bio = db.Column(db.String(255), nullable=True)
     avatar_url = db.Column(db.String(255), nullable=True)
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
 
 
     # relationships

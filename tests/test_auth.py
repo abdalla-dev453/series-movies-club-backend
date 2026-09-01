@@ -43,3 +43,15 @@ def test_logout_revokes_token(client):
 
     me_resp = client.put("/api/users/1", headers=headers, json={"bio": "hi"})
     assert me_resp.status_code == 401
+
+
+def test_list_users_excludes_current_user(client):
+    alice = signup(client, username="alice", email="alice@example.com", password="password123")
+    bob = signup(client, username="bob", email="bob@example.com", password="password123")
+
+    alice_headers = auth_headers(alice)
+    resp = client.get("/api/users", headers=alice_headers)
+
+    assert resp.status_code == 200
+    users = resp.get_json()["items"]
+    assert [u["username"] for u in users] == ["bob"]
