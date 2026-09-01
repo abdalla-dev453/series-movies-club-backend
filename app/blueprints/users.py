@@ -12,6 +12,7 @@ from app.models import User
 
 users_bp = Blueprint("users", __name__, url_prefix="/users")
 
+
 @users_bp.get("")
 @jwt_required()
 def list_users():
@@ -35,10 +36,12 @@ def list_users():
         }
     ), 200
 
+
 @users_bp.route("/<int:user_id>", methods=["GET"])
 def get_user(user_id):
     user = get_or_404(User, user_id)
     return jsonify(user_to_public_dict(user)), 200
+
 
 @users_bp.route("/<int:user_id>", methods=["PUT"])
 @jwt_required()
@@ -47,7 +50,6 @@ def update_user(user_id):
     current_user = get_current_user()
     current_user_id = current_user.id
     require_owner(user.id, current_user_id, "You can only edit your own profile")
-
 
     data = get_json_body()
     for field in ("bio", "avatar_url"):

@@ -47,7 +47,7 @@ def test_logout_revokes_token(client):
 
 def test_list_users_excludes_current_user(client):
     alice = signup(client, username="alice", email="alice@example.com", password="password123")
-    bob = signup(client, username="bob", email="bob@example.com", password="password123")
+    signup(client, username="bob", email="bob@example.com", password="password123")
 
     alice_headers = auth_headers(alice)
     resp = client.get("/api/users", headers=alice_headers)
