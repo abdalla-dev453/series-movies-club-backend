@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required
 
 from app.extensions import db
@@ -7,10 +7,33 @@ from app.services.follow_service import follow_user, unfollow_user, list_followe
 from app.utils.error_handlers import APIError
 from app.utils.decorators import get_or_404
 from app.utils.permissions import get_current_user, require_owner
-from app.utils.validators import get_json_body
+from app.utils.validators import get_json_body, validate_pagination_params
 from app.models import User
 
 users_bp = Blueprint("users", __name__, url_prefix="/users")
+
+@users_bp.get("")
+@jwt_required()
+def list_users():
+    current_user = get_current_user()
+    page, per_page = validate_pagination_params(request.args)
+
+    pagination = (
+        User.query
+        .filter(User.id != current_user.id)
+        .order_by(User.created_at.desc())
+        .paginate(page=page, per_page=per_page, error_out=False)
+    )
+
+    return jsonify(
+        {
+            "items": [user_to_public_dict(user) for user in pagination.items],
+            "page": pagination.page,
+            "per_page": pagination.per_page,
+            "total_items": pagination.total,
+            "total_pages": pagination.pages,
+        }
+    ), 200
 
 @users_bp.route("/<int:user_id>", methods=["GET"])
 def get_user(user_id):
