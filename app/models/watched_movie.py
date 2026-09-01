@@ -14,10 +14,12 @@ class WatchedMovie(db.Model):
         db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
     movie_title = db.Column(db.String(255), nullable=False)
+    poster_url = db.Column(db.String(500), nullable=True)
     watched_date = db.Column(db.Date, nullable=True)
     personal_rating = db.Column(db.Integer, nullable=True)  # 1-5
     notes = db.Column(db.Text, nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(
+        db.DateTime, default=datetime.utcnow, nullable=False)
 
     def __repr__(self):
         return f"<WatchedMovie {self.movie_title!r} user={self.user_id}>"

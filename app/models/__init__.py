@@ -10,6 +10,7 @@ from app.models.follow import Follow
 from app.models.post import Post
 from app.models.review import Review
 from app.models.watched_movie import WatchedMovie
+from app.models.club_message import ClubMessage
 from app.models.token_blocklist import TokenBlocklist
 
 __all__ = [
@@ -20,5 +21,6 @@ __all__ = [
     "Post",
     "Review",
     "WatchedMovie",
+    "ClubMessage",
     "TokenBlocklist",
 ]

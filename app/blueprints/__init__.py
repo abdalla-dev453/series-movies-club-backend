@@ -5,6 +5,7 @@ from app.blueprints.reviews import reviews_bp
 from app.blueprints.posts import posts_bp
 from app.blueprints.clubs import clubs_bp
 from app.blueprints.club_members import club_members_bp
+from app.blueprints.club_messages import club_messages_bp
 from app.blueprints.watched_movies import watched_movies_bp
 
 
@@ -41,6 +42,11 @@ def register_blueprints(app):
 
     app.register_blueprint(
         club_members_bp,
+        url_prefix="/api/clubs"
+    )
+
+    app.register_blueprint(
+        club_messages_bp,
         url_prefix="/api/clubs"
     )
 
