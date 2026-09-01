@@ -34,3 +34,4 @@ zipp==3.20.2
 gunicorn
 pytest
 
+pytest==9.1.1
