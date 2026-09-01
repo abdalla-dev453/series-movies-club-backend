@@ -23,7 +23,8 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
 
-    TMDB_API_KEY = os.environ.get("TMDB_API_KEY")
+    # Support both the documented names and the repo's legacy/actual env naming.
+    TMDB_API_KEY = os.environ.get("TMDB_API_KEY") or os.environ.get("TMDB_KEY")
     TMDB_TOKEN = os.environ.get("TMDB_TOKEN")
 
 
