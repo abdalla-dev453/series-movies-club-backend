@@ -45,7 +45,6 @@ def search_movies():
 
 
 @movies_bp.route('/trending', methods=['GET'])
-@login_required
 def trending_movies():
     try:
         results = movie_service.trending()
