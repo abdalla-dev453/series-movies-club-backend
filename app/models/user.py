@@ -12,6 +12,8 @@ class User(db.Model):
                          nullable=False, unique=True)
     email = db.Column(db.String(120), index=True, nullable=False, unique=True)
     password_hash = db.Column(db.String(128), nullable=False)
+    is_superuser = db.Column(db.Boolean, nullable=False, default=False)
+    is_banned = db.Column(db.Boolean, nullable=False, default=False)
     bio = db.Column(db.String(255), nullable=True)
     avatar_url = db.Column(db.String(255), nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=utcnow)

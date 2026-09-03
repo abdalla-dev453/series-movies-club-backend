@@ -55,6 +55,18 @@ def _ensure_legacy_sqlite_columns(app):
                             "ALTER TABLE watched_movies ADD COLUMN poster_url VARCHAR(500)")
                     )
 
+        if inspector.has_table("users"):
+            columns = [row["name"] for row in inspector.get_columns("users")]
+            with db.engine.begin() as connection:
+                if "is_superuser" not in columns:
+                    connection.execute(db.text(
+                        "ALTER TABLE users ADD COLUMN is_superuser BOOLEAN NOT NULL DEFAULT 0"
+                    ))
+                if "is_banned" not in columns:
+                    connection.execute(db.text(
+                        "ALTER TABLE users ADD COLUMN is_banned BOOLEAN NOT NULL DEFAULT 0"
+                    ))
+
 
 def _init_extensions(app):
     db.init_app(app)

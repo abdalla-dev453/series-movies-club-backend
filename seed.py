@@ -44,6 +44,8 @@ def seed_database():
                 "avatar_url": "https://api.dicebear.com/7.x/bottts/svg?seed=charlie"},
             {"username": "diana", "email": "diana@example.com", "bio": "Action movie enthusiast.",
                 "avatar_url": "https://api.dicebear.com/7.x/bottts/svg?seed=diana"},
+            {"username": "Admin", "email": "admin@cineclub.dev", "bio": "System administrator.",
+                "is_superuser": True},
         ]
 
         users = []
@@ -51,9 +53,12 @@ def seed_database():
             user = User(
                 username=u["username"],
                 email=u["email"],
-                password_hash=hashed_password,
+                password_hash=generate_password_hash(
+                    "0000" if u.get("is_superuser") else "password123"
+                ),
                 bio=u["bio"],
-                avatar_url=u["avatar_url"],
+                avatar_url=u.get("avatar_url"),
+                is_superuser=u.get("is_superuser", False),
                 created_at=datetime.now(timezone.utc)
             )
             users.append(user)
