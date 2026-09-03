@@ -53,6 +53,11 @@ def require_owner(resource_user_id, current_user_id, message="You don't own this
         raise APIError(message, 403)
 
 
+def require_superuser():
+    if not get_current_user().is_superuser:
+        raise APIError("Superuser access required", 403)
+
+
 def login_required(f):
     @jwt_required()
     @wraps(f)

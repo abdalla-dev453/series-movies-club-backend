@@ -22,6 +22,8 @@ def user_to_private_dict(user):
     data = user_to_public_dict(user)
 
     data["email"] = user.email
+    data["is_superuser"] = user.is_superuser
+    data["is_banned"] = user.is_banned
     data["created_at"] = user.created_at.isoformat()
 
     return data
