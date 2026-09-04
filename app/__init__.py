@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, jsonify
 
 from config import config_by_name
@@ -78,15 +80,20 @@ def _init_extensions(app):
     jwt.init_app(app)
     bcrypt.init_app(app)
 
+    configured_origins = os.environ.get("CORS_ORIGINS") or os.environ.get("FRONTEND_URL")
+    allowed_origins = [
+        origin.strip()
+        for origin in (configured_origins or "").split(",")
+        if origin.strip()
+    ] or [
+        "http://localhost:5173",
+        "http://localhost:3000",
+    ]
     cors.init_app(app, resources={
         r"/api/*": {
-            "origins": [
-                "https://group-7-tv-series-and-movie-club.vercel.app",
-                "http://localhost:5173",
-                "http://localhost:3000"
-            ],
+            "origins": allowed_origins,
             "allow_headers": ["Content-Type", "Authorization"],
-            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+            "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
         }
     })
 def _init_jwt_callbacks(app):

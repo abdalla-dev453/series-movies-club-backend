@@ -33,6 +33,11 @@ pytest
 | `SECRET_KEY` | Flask session/signing secret |
 | `JWT_SECRET_KEY` | Signing secret for access/refresh tokens |
 | `DATABASE_URL` | SQLAlchemy DB URI (Postgres in prod, SQLite by default in dev) |
+| `CORS_ORIGINS` | Comma-separated frontend origins allowed to call the API |
+
+For a deployed frontend, set `CORS_ORIGINS` to its exact URL (for example,
+`https://your-frontend.vercel.app`) and set the frontend's `VITE_API_URL` to
+the deployed backend URL before building.
 
 ## Auth model
 
