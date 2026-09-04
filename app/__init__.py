@@ -77,12 +77,11 @@ def _init_extensions(app):
     migrate.init_app(app, db)
     jwt.init_app(app)
     bcrypt.init_app(app)
-    cors.init_app(app)
 
     cors.init_app(app, resources={
         r"/api/*": {
             "origins": [
-                "https://vercel.app",
+                "https://group-7-tv-series-and-movie-club.vercel.app",
                 "http://localhost:5173",
                 "http://localhost:3000"
             ],
@@ -90,8 +89,6 @@ def _init_extensions(app):
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
         }
     })
-
-
 def _init_jwt_callbacks(app):
     """Wire flask-jwt-extended's hooks to our TokenBlocklist table, so a
     /logout'd access token is rejected on every subsequent request even
