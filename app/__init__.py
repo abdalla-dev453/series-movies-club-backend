@@ -96,8 +96,6 @@ def _init_extensions(app):
             "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
         }
     })
-
-
 def _init_jwt_callbacks(app):
     """Wire flask-jwt-extended's hooks to our TokenBlocklist table, so a
     /logout'd access token is rejected on every subsequent request even

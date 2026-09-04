@@ -54,7 +54,7 @@ def seed_database():
                 username=u["username"],
                 email=u["email"],
                 password_hash=generate_password_hash(
-                    "0000" if u.get("is_superuser") else "password123"
+                    "00000000" if u.get("is_superuser") else "password123"
                 ),
                 bio=u["bio"],
                 avatar_url=u.get("avatar_url"),
