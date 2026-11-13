@@ -16,6 +16,8 @@ def register_blueprints(app):
         url_prefix="/api/movies"
     )
 
+    app.register_blueprint(watch_bp, url_prefix="/api/movies")
+
     app.register_blueprint(
         auth_bp,
         url_prefix="/api/auth"

@@ -38,8 +38,11 @@ def search_movies():
 
     try:
         results = movie_service.search(query)
-    except MovieServiceUnavailableError:
-        return jsonify({'error': 'Could not reach movie database'}), 502
+    except MovieServiceUnavailableError as e:
+       import logging
+       logging.error(f"Movie service failed: {str(e)}") # This will print the real root cause to your Render logs!
+       return jsonify({'error': 'Could not reach movie database'}), 502
+
 
     return jsonify(MovieSearchResponseSchema().dump({'items': results}))
 
