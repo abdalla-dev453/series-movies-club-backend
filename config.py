@@ -29,7 +29,11 @@ class Config:
 
     # Support both the documented names and the repo's legacy/actual env naming.
     TMDB_API_KEY = os.environ.get("TMDB_API_KEY") or os.environ.get("TMDB_KEY")
-    TMDB_TOKEN = os.environ.get("TMDB_TOKEN")
+    TMDB_ACCESS_TOKEN = os.environ.get("TMDB_ACCESS_TOKEN") or os.environ.get("TMDB_TOKEN")
+    TMDB_TOKEN = TMDB_ACCESS_TOKEN
+    TMDB_BASE_URL = os.environ.get("TMDB_BASE_URL", "https://api.themoviedb.org/3")
+    TMDB_DEFAULT_WATCH_REGION = os.environ.get("TMDB_DEFAULT_WATCH_REGION", "US").upper()
+    TMDB_REDIS_URL = os.environ.get("TMDB_REDIS_URL")
 
 
 class DevelopmentConfig(Config):

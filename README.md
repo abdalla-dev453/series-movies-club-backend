@@ -33,6 +33,40 @@ pytest
 | `SECRET_KEY` | Flask session/signing secret |
 | `JWT_SECRET_KEY` | Signing secret for access/refresh tokens |
 | `DATABASE_URL` | SQLAlchemy DB URI (Postgres in prod, SQLite by default in dev) |
+| `TMDB_API_KEY` or `TMDB_ACCESS_TOKEN` | TMDB credentials used only by the backend |
+| `TMDB_BASE_URL` | TMDB API base URL (defaults to `https://api.themoviedb.org/3`) |
+| `TMDB_DEFAULT_WATCH_REGION` | Default ISO 3166-1 alpha-2 watch region (defaults to `US`) |
+| `TMDB_REDIS_URL` | Optional Redis URL for caching; in-memory TTL caching is used otherwise |
+
+## Legal movie watch information
+
+Both endpoints require a valid JWT access token:
+
+- `GET /api/movies/<tmdb_id>/watch?country=KE` returns the movie title,
+  YouTube trailers/teasers/clips suitable for in-app embedding, a selected
+  primary trailer, and stream/rent/buy availability for the region.
+- `GET /api/movies/<tmdb_id>/watch/providers?country=KE` returns only regional
+  provider availability. The `country` parameter is optional and defaults to
+  `TMDB_DEFAULT_WATCH_REGION`; when supplied it must be two uppercase letters.
+
+Provider entries contain TMDB's movie watch page as `deep_link`. This is a
+discovery link, not a direct full-movie playback URL. ReelClub plays official
+trailers and links users to licensed providers; it does not host or stream
+full movies. Example provider response:
+
+```json
+{
+  "country_code": "KE",
+  "stream": [{
+    "provider_id": 8,
+    "provider_name": "Netflix",
+    "logo_path": "/path.jpg",
+    "deep_link": "https://www.themoviedb.org/movie/123/watch?locale=KE"
+  }],
+  "rent": [],
+  "buy": []
+}
+```
 
 ## Auth model
 
