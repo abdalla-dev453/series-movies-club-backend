@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, jsonify
 
 from config import config_by_name
@@ -55,6 +57,18 @@ def _ensure_legacy_sqlite_columns(app):
                             "ALTER TABLE watched_movies ADD COLUMN poster_url VARCHAR(500)")
                     )
 
+        if inspector.has_table("users"):
+            columns = [row["name"] for row in inspector.get_columns("users")]
+            with db.engine.begin() as connection:
+                if "is_superuser" not in columns:
+                    connection.execute(db.text(
+                        "ALTER TABLE users ADD COLUMN is_superuser BOOLEAN NOT NULL DEFAULT 0"
+                    ))
+                if "is_banned" not in columns:
+                    connection.execute(db.text(
+                        "ALTER TABLE users ADD COLUMN is_banned BOOLEAN NOT NULL DEFAULT 0"
+                    ))
+
 
 def _init_extensions(app):
     db.init_app(app)
@@ -65,21 +79,23 @@ def _init_extensions(app):
     migrate.init_app(app, db)
     jwt.init_app(app)
     bcrypt.init_app(app)
-    cors.init_app(app)
 
+    configured_origins = os.environ.get("CORS_ORIGINS") or os.environ.get("FRONTEND_URL")
+    allowed_origins = [
+        origin.strip()
+        for origin in (configured_origins or "").split(",")
+        if origin.strip()
+    ] or [
+        "http://localhost:5173",
+        "http://localhost:3000",
+    ]
     cors.init_app(app, resources={
         r"/api/*": {
-            "origins": [
-                "https://vercel.app",
-                "http://localhost:5173",
-                "http://localhost:3000"
-            ],
+            "origins": allowed_origins,
             "allow_headers": ["Content-Type", "Authorization"],
-            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+            "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
         }
     })
-
-
 def _init_jwt_callbacks(app):
     """Wire flask-jwt-extended's hooks to our TokenBlocklist table, so a
     /logout'd access token is rejected on every subsequent request even

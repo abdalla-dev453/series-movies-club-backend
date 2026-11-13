@@ -38,6 +38,22 @@ def index():
     ), 200
 
 
+@clubs_bp.get("/public")
+def public_index():
+    page, per_page = validate_pagination_params(request.args)
+    pagination = list_clubs(page, per_page)
+
+    return jsonify(
+        {
+            "items": [club_to_dict(club) for club in pagination.items],
+            "page": pagination.page,
+            "per_page": per_page,
+            "total_items": pagination.total,
+            "total_pages": pagination.pages,
+        }
+    ), 200
+
+
 # ============================================================
 # CREATE CLUB
 # ============================================================
